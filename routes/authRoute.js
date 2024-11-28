@@ -62,35 +62,37 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
   
     try {
-      
       const user = await User.findOne({ email });
-      
+  
       if (!user) {
-        console.log('User not found'); 
+        console.log('User not found');
         return res.status(401).json({ message: 'Invalid credentials' });
       }
   
-     
+      console.log('Stored hashed password:', user.password); // Debugging: Log stored password
+      console.log('Entered password:', password); // Debugging: Log entered password
+  
       const isMatch = await user.matchPassword(password);
-      
+      console.log("")
+  
       if (!isMatch) {
-        console.log('Password mismatch'); 
+        console.log('Password mismatch');
         return res.status(401).json({ message: 'Invalid credentials' });
       }
   
-      // Create JWT Token
       const token = jwt.sign(
         { id: user._id, role: user.role },
-        process.env.JWT_SECRET,  
+        process.env.JWT_SECRET,
         { expiresIn: '1h' }
       );
   
       res.json({ token, role: user.role });
     } catch (error) {
-      console.error('Error in login route:', error); 
+      console.error('Error in login route:', error);
       res.status(500).json({ message: 'Server Error' });
     }
   });
+  
   
 
 // Student dashboard

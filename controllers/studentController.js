@@ -40,7 +40,7 @@ exports.loginStudent = async (req, res) => {
 
     const token = jwt.sign({ id: student._id, email: student.email }, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-    // Assuming the Student model has a `role` field
+
     res.status(200).json({ message: 'Login successful', token, role: student.role });
   } catch (error) {
     res.status(500).json({ error: error.message });

@@ -1,22 +1,21 @@
-// middleware/authMiddleware.js
 
 const jwt = require('jsonwebtoken');
-const User = require('../models/UserModel'); // Assuming you have a User model
+const User = require('../models/UserModel'); 
 
-// Protect route - Verify token
+
 const protect = (req, res, next) => {
   let token;
 
-  // Check for token in headers
+ 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      // Get token from header
+    
       token = req.headers.authorization.split(' ')[1];
 
-      // Verify token
+ 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-      // Attach user to request object
+     
       req.user = decoded.user;
       next();
     } catch (error) {
@@ -29,7 +28,7 @@ const protect = (req, res, next) => {
   }
 };
 
-// Authorize role-based access
+
 const authorize = (roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {

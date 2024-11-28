@@ -1,12 +1,12 @@
 const PlacementDrive = require('../models/placementDriveModel');
 const Company = require('../models/companyModel'); 
 
-// Controller to create a new placement drive
+
 const createPlacementDrive = async (req, res) => {
   const { companyId, title, description, date, location } = req.body;
 
   try {
-    // Create a new placement drive
+
     const placementDrive = new PlacementDrive({
       company: companyId,
       title,
@@ -26,7 +26,7 @@ const createPlacementDrive = async (req, res) => {
   }
 };
 
-// Controller to generate placement drive report
+
 const getPlacementDriveReport = async (req, res) => {
   const { driveId } = req.params;
 

@@ -3,17 +3,17 @@ const mongoose = require('mongoose');
 const academicRecordSchema = new mongoose.Schema({
   studentId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student', // Assuming there's a Student model
+    ref: 'Student', 
     required: true
   },
   grades: {
     type: Map,
-    of: String, // Key-Value for subjects and grades
+    of: String,
     required: true
   },
-  achievements: [String], // List of achievements
+  achievements: [String], 
   transcripts: {
-    type: String, // URL to the transcript file or a base64 string for transcript PDF
+    type: String, 
   },
   updatedAt: {
     type: Date,

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-// Define the Placement Drive Schema
+
 const PlacementDriveSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String },
@@ -14,9 +14,9 @@ const PlacementDriveSchema = new mongoose.Schema({
       status: { type: String, enum: ['Scheduled', 'Completed', 'Offer Made'], default: 'Scheduled' },
     }
   ],
-  // Metrics to track the recruitment status
-  interviewsConducted: { type: Number, default: 0 },  // Track the number of interviews conducted
-  offersMade: { type: Number, default: 0 },           // Track the number of offers made
+ 
+  interviewsConducted: { type: Number, default: 0 }, 
+  offersMade: { type: Number, default: 0 },          
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -10,7 +10,7 @@ dotenv.config();
 const app = express();
 
 
-// Cors setup
+
 const corsOptions = {
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   optionsSuccessStatus: 200,
@@ -21,7 +21,7 @@ app.use(express.json());
 
 
 
-// File upload setup
+
 const fs = require('fs');
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -31,7 +31,7 @@ const upload = multer({ dest: 'uploads/' });
 
 
 
-// Import routes
+
 const applicationRoutes = require('./routes/applicationRoute');
 const interviewRoutes = require('./routes/interviewRoute');
 const studentRoutes = require('./routes/studentRoute');
@@ -52,11 +52,6 @@ app.get('/api/test', (req, res) => {
 
 
 
-
-
-
-
-// API routes
 app.use('/api/students', studentRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/interviews', interviewRoutes);
@@ -68,15 +63,11 @@ app.use('/api', academicRecordRoutes);
 app.use('/api/auth', authRoute);
 
 
-
-
-
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(`Error: ${err.message}`);
   res.status(err.status || 500).json({
     message: err.message || 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err.stack : 'Internal Server Error', // hide stack in production
+    error: process.env.NODE_ENV === 'development' ? err.stack : 'Internal Server Error',
   });
 });
 
@@ -84,7 +75,7 @@ app.use((err, req, res, next) => {
 
 
 
-// MongoDB connection
+
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected'))
@@ -97,7 +88,6 @@ mongoose
 
 
 
-// Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
