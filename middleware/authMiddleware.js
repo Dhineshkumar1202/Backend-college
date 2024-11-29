@@ -1,38 +1,37 @@
-
 const jwt = require('jsonwebtoken');
-const User = require('../models/UserModel'); 
+const User = require('../models/UserModel');
 
-
-const protect = (req, res, next) => {
+// Middleware to protect routes
+const protect = async (req, res, next) => {
   let token;
 
- 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-    
       token = req.headers.authorization.split(' ')[1];
 
- 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-     
-      req.user = decoded.user;
+      req.user = await User.findById(decoded.id).select('-password');
+
+      if (!req.user) {
+        return res.status(401).json({ message: 'User not found' });
+      }
+
       next();
     } catch (error) {
-      res.status(401).json({ message: 'Not authorized, token failed' });
+      console.error('Token verification failed:', error);
+      return res.status(401).json({ message: 'Not authorized, token failed' });
     }
-  }
-
-  if (!token) {
-    res.status(401).json({ message: 'Not authorized, no token' });
+  } else {
+    return res.status(401).json({ message: 'Not authorized, no token provided' });
   }
 };
 
-
+// Middleware to authorize roles
 const authorize = (roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'Not authorized' });
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Access denied' });
     }
     next();
   };

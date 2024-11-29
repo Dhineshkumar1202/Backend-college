@@ -1,37 +1,55 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { 
-    type: String, 
-    required: true, 
-    unique: true, 
-    match: [/.+@.+\..+/, 'Please enter a valid email address'] 
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please enter a valid email address'],
+    },
+    password: { type: String, required: true },
+    role: {
+      type: String,
+      enum: ['student', 'admin', 'company'],
+      required: true,
+      default: 'Admin',
+    },
   },
-  password: { type: String, required: true },
-  role: { 
-    type: String, 
-    enum: ['student', 'admin', 'company'], 
-    required: true 
-  },
-});
+  { timestamps: true }
+);
 
-
+// Hash password before saving
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   try {
     this.password = await bcrypt.hash(this.password, 10);
-    next(); 
+    next();
   } catch (err) {
+    console.error('Error hashing password:', err);
     next(err);
   }
 });
 
-
+// Match entered password with hashed password
 userSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+// Role-based methods
+userSchema.methods.isAdmin = function () {
+  return this.role === 'admin';
+};
+
+userSchema.methods.isStudent = function () {
+  return this.role === 'student';
+};
+
+userSchema.methods.isCompany = function () {
+  return this.role === 'company';
 };
 
 module.exports = mongoose.model('User', userSchema);
