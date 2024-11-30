@@ -1,13 +1,59 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const { type } = require("os");
 
 
 const studentSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  role: { type: String, required: true, default: "student" }, 
-  offerAccepted: { type: Boolean, default: false },
+  name:{
+    type:String,
+    required:true
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  rollNumber: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  department: {
+    type: String,
+    required: true,
+  },
+  CGPA: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 10,
+  },
+  resume: {
+    type: String, 
+    required: false,
+  },
+  applications: [
+    {
+      jobId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job",
+      },
+      status: {
+        type: String,
+        enum: ["submitted", "reviewed", "shortlisted", "rejected"],
+        default: "submitted",
+      },
+      appliedAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 
-module.exports = mongoose.model('Student', studentSchema);
+const Student = mongoose.model("Student", studentSchema);
+module.exports = Student;

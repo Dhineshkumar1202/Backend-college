@@ -34,25 +34,23 @@ const upload = multer({ dest: 'uploads/' });
 
 const applicationRoutes = require('./routes/applicationRoute');
 const interviewRoutes = require('./routes/interviewRoute');
-const studentRoutes = require('./routes/studentRoute');
 const jobRoutes = require('./routes/jobRoute');
 const companyRoutes = require('./routes/companyRoute');
 const placementDriveRoutes = require('./routes/placementDriveRoute'); 
 const recruitmentRoutes = require('./routes/recruitmentRoute'); // <-- Correct import
 const academicRecordRoutes = require('./routes/academyRecordRoute');
 const { protect } = require('./middleware/authMiddleware');
-const authRoute = require('./routes/authRoute');
+const userRoutes = require("./routes/userRoute");
+const studentRoutes = require("./routes/studentRoute");
 
 
 
 
-app.get('/api/test', (req, res) => {
-  res.send('Server is working!');
+app.get("/", (req, res) => {
+  res.send("College Placement Management System API is running...");
 });
 
 
-
-app.use('/api/students', studentRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/interviews', interviewRoutes);
 app.use('/api/jobs', protect, jobRoutes);
@@ -60,7 +58,9 @@ app.use('/api/companies', companyRoutes);
 app.use('/api/placement-drives', placementDriveRoutes); 
 app.use('/api', recruitmentRoutes); 
 app.use('/api', academicRecordRoutes);
-app.use('/api/auth', authRoute);
+app.use("/api/users", userRoutes);       
+app.use("/api/students", studentRoutes); 
+
 
 
 app.use((err, req, res, next) => {
@@ -72,10 +72,6 @@ app.use((err, req, res, next) => {
 });
 
 
-
-
-
-
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB Connected'))
@@ -83,9 +79,6 @@ mongoose
     console.error('DB Connection Error:', err.message);
     process.exit(1);
   });
-
-
-
 
 
 const PORT = process.env.PORT || 5000;

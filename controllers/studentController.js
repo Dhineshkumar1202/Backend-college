@@ -1,49 +1,71 @@
-const Student = require('../models/studentModel');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const Student = require("../models/studentModel");
+const User = require("../models/studentModel");
 
-exports.registerStudent = async (req, res) => {
-  const { name, email, password } = req.body;
+
+const createStudent = async (req, res) => {
   try {
-    const existingStudent = await Student.findOne({ email });
+    const { userId } = req.user; 
+    const { rollNumber, department, CGPA } = req.body;
+
+
+    const existingStudent = await Student.findOne({ user: userId });
     if (existingStudent) {
-      return res.status(400).json({ message: 'Email already registered' });
+      return res.status(400).json({ error: "Student profile already exists" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newStudent = new Student({
-      name,
-      email,
-      password: hashedPassword,
+  
+    const student = await Student.create({
+      user: userId,
+      rollNumber,
+      department,
+      CGPA,
     });
 
-    await newStudent.save();
-    res.status(201).json({ message: 'Registration successful' });
+    res.status(201).json({ message: "Student profile created successfully", student });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-exports.loginStudent = async (req, res) => {
-  const { email, password } = req.body;
 
+const getStudentProfile = async (req, res) => {
   try {
-    const student = await Student.findOne({ email });
+    const { userId } = req.user;
+
+    const student = await Student.findOne({ user: userId }).populate("user", "-password");
     if (!student) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+      return res.status(404).json({ error: "Student profile not found" });
     }
 
-    const isMatch = await bcrypt.compare(password, student.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
-
-    const token = jwt.sign({ id: student._id, email: student.email }, process.env.JWT_SECRET, { expiresIn: '1d' });
-
-
-    res.status(200).json({ message: 'Login successful', token, role: student.role });
+    res.status(200).json(student);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
   }
 };
 
+
+const updateStudentProfile = async (req, res) => {
+  try {
+    const { userId } = req.user;
+    const { rollNumber, department, CGPA, resume } = req.body;
+
+    const student = await Student.findOneAndUpdate(
+      { user: userId },
+      { rollNumber, department, CGPA, resume },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({ error: "Student profile not found" });
+    }
+
+    res.status(200).json({ message: "Student profile updated successfully", student });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+module.exports = { createStudent, getStudentProfile, updateStudentProfile };
