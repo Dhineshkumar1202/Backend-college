@@ -4,6 +4,7 @@ const Company = require('../models/companyModel');
 
 
 exports.createJob = async (req, res) => {
+    console.log(req.body);  
     const { title, description, company, location, applicationDeadline } = req.body;
 
     if (!title || !description || !company || !location || !applicationDeadline) {
@@ -18,12 +19,14 @@ exports.createJob = async (req, res) => {
             location,
             applicationDeadline,
         });
+        console.log('Created job:', job); 
         res.status(201).json({ message: 'Job created successfully', job });
     } catch (error) {
         console.error('Error creating job:', error.message);
         res.status(500).json({ error: 'Failed to create job' });
     }
 };
+
 
 
 exports.getAllJobs = async (req, res) => {

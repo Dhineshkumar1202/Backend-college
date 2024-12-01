@@ -1,24 +1,21 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+// models/companyModel.js
+const mongoose = require('mongoose');
 
-const companySchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  location: { type: String },
-  jobPosts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'JobPost' }]  
-});
+const companySchema = mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+    location: {
+      type: String,
+      required: true,
+    },
+    // Add any other fields that are relevant for your company
+  },
+  { timestamps: true }
+);
 
-companySchema.pre("save", async function(next) {
-  if (this.isModified("password")) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-  }
-  next();
-});
+const Company = mongoose.model('Company', companySchema);
 
-companySchema.methods.matchPassword = async function(password) {
-  return await bcrypt.compare(password, this.password);
-};
-
-module.exports = mongoose.model("Company", companySchema);
+module.exports = Company;
