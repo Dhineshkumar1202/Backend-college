@@ -11,7 +11,7 @@ const companySchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    // Add any other fields that are relevant for your company
+  
   },
   { timestamps: true }
 );

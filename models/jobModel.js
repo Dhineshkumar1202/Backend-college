@@ -13,7 +13,7 @@ const jobSchema = mongoose.Schema(
     },
     company: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Company',  // This should reference the Company model
+      ref: 'Company',  
       required: true,
     },
     location: {

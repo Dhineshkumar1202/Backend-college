@@ -33,8 +33,10 @@ const companyRoutes = require('./routes/companyRoute');
 const placementDriveRoutes = require('./routes/placementDriveRoute'); 
 const recruitmentRoutes = require('./routes/recruitmentRoute'); 
 const academicRecordRoutes = require('./routes/academyRecordRoute');
-const { protect } = require('./middleware/authMiddleware');
-const authRoutes = require('./routes/authRoute');
+const { protect } = require('./middlewares/authMiddleware');
+const authRoutes = require('./routes/authRoute'); 
+const studentRoutes = require('./routes/studentRoute'); 
+
 
 
 
@@ -44,13 +46,23 @@ app.get("/", (req, res) => {
 });
 
 
+
+
+
 app.use('/api/applications', applicationRoutes);
 app.use('/api/interviews', interviewRoutes);
 app.use('/api/jobs', protect, jobRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/placement-drives', placementDriveRoutes); 
 app.use('/api', recruitmentRoutes); 
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);      
+app.use('/api/student', studentRoutes);
+ 
+
+
+
+
+
 
 
 app.use((err, req, res, next) => {

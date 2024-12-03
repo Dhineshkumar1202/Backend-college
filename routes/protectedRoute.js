@@ -1,20 +1,16 @@
+
 const express = require('express');
-const { protect, authorize } = require('../middleware/authMiddleware'); // Import protect and authorize middlewares
+const { checkRole } = require('../middlewares/roleMiddleware');  
 const router = express.Router();
 
-// A route protected for "student" role
-router.post('/someStudentRoute', protect, authorize(['student']), (req, res) => {
-  res.status(200).json({ message: 'This is a protected route for students' });
+
+router.get('/admin-only', checkRole('admin'), (req, res) => {
+    res.status(200).json({ message: 'Welcome Admin' });
 });
 
-// A route protected for "admin" role
-router.post('/someAdminRoute', protect, authorize(['admin']), (req, res) => {
-  res.status(200).json({ message: 'This is a protected route for admins' });
-});
 
-// Another example protected route, for demonstration
-router.get('/protected-data', protect, (req, res) => {
-  res.status(200).json({ message: 'This is protected data', user: req.user });
+router.get('/company-only', checkRole('company'), (req, res) => {
+    res.status(200).json({ message: 'Welcome Company' });
 });
 
 module.exports = router;
